@@ -2,22 +2,21 @@
 
 package model
 
+type Cart struct {
+	ID    string  `json:"id"`
+	Items []*Item `json:"items"`
+	User  *User   `json:"user"`
+}
+
 type Mutation struct {
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type NewItem struct {
+	Sku   string  `json:"sku"`
+	Price float64 `json:"price"`
 }
 
 type Query struct {
-}
-
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
 }
 
 type User struct {

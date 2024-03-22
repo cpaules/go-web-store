@@ -11,15 +11,48 @@ import (
 	"github.com/cpaules/go-web-store/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// ID is the resolver for the id field.
+func (r *itemResolver) ID(ctx context.Context, obj *model.Item) (string, error) {
+	panic(fmt.Errorf("not implemented: ID - id"))
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Sku is the resolver for the sku field.
+func (r *itemResolver) Sku(ctx context.Context, obj *model.Item) (string, error) {
+	panic(fmt.Errorf("not implemented: Sku - sku"))
 }
+
+// Price is the resolver for the price field.
+func (r *itemResolver) Price(ctx context.Context, obj *model.Item) (float64, error) {
+	panic(fmt.Errorf("not implemented: Price - price"))
+}
+
+// CreateItem is the resolver for the createItem field.
+func (r *mutationResolver) CreateItem(ctx context.Context, item model.NewItem) (*model.Item, error) {
+	panic(fmt.Errorf("not implemented: CreateItem - createItem"))
+}
+
+// AddItemToCart is the resolver for the addItemToCart field.
+func (r *mutationResolver) AddItemToCart(ctx context.Context, sku string) (*model.Cart, error) {
+	panic(fmt.Errorf("not implemented: AddItemToCart - addItemToCart"))
+}
+
+// Checkout is the resolver for the checkout field.
+func (r *mutationResolver) Checkout(ctx context.Context, cartID string) (string, error) {
+	panic(fmt.Errorf("not implemented: Checkout - checkout"))
+}
+
+// Items is the resolver for the items field.
+func (r *queryResolver) Items(ctx context.Context) ([]*model.Item, error) {
+	panic(fmt.Errorf("not implemented: Items - items"))
+}
+
+// Cart is the resolver for the cart field.
+func (r *queryResolver) Cart(ctx context.Context) (*model.Cart, error) {
+	panic(fmt.Errorf("not implemented: Cart - cart"))
+}
+
+// Item returns ItemResolver implementation.
+func (r *Resolver) Item() ItemResolver { return &itemResolver{r} }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
@@ -27,5 +60,6 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+type itemResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
