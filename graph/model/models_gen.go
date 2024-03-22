@@ -2,24 +2,7 @@
 
 package model
 
-type Cart struct {
-	ID    string  `json:"id"`
-	Items []*Item `json:"items"`
-	User  *User   `json:"user"`
-}
-
-type Mutation struct {
-}
-
 type NewItem struct {
 	Sku   string  `json:"sku"`
 	Price float64 `json:"price"`
-}
-
-type Query struct {
-}
-
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
 }
