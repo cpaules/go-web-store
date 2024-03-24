@@ -31,7 +31,7 @@ func (r *mutationResolver) AddItemToCart(ctx context.Context, sku string) (*mode
 	r.cart.Items = append(r.cart.Items, r.items[sku])
 	message := fmt.Sprintf("AddedToCart -> ItemSku: %s, CartId: %s, ServerTS: %s", sku, r.cart.ID, time.Now().Format(time.RFC3339))
 	// fmt.Printf("Publishing @%s: %s\n", "AddedToCart", message)
-	event.EB.Publish("AddedToCart", message)
+	event.EB.Publish(event.TopicAddedToCart, message)
 	return r.cart, nil
 }
 
@@ -49,7 +49,7 @@ func (r *mutationResolver) Checkout(ctx context.Context, cartID string) (*model.
 	}
 	r.invoices = append(r.invoices, newInvoice)
 	message := fmt.Sprintf("Checkout -> CartId: %s, ServerTS: %s", r.cart.ID, time.Now().Format(time.RFC3339))
-	event.EB.Publish("Checkout", message)
+	event.EB.Publish(event.TopicCheckout, message)
 	return newInvoice, nil
 }
 
@@ -71,7 +71,7 @@ func (r *mutationResolver) ConfirmPurchase(ctx context.Context, invoiceID string
 	invoice.Status = &paid
 
 	message := fmt.Sprintf("PurchaseConfirmed -> invoiceID: %s, ServerTS: %s", invoiceID, time.Now().Format(time.RFC3339))
-	event.EB.Publish("PurchaseConfirmed", message)
+	event.EB.Publish(event.TopicPurchaseConfirmed, message)
 	return "Purchase successfully confirmed", nil
 }
 

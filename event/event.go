@@ -5,34 +5,31 @@ import (
 	"sync"
 )
 
-// const (
-// 	AddedToCart          = "AddedToCart"
-// 	PurchaseConfirmation = "PurchaseConfirmation"
-// )
+type Topic string
+
+const (
+	TopicAddedToCart       Topic = "AddedToCart"
+	TopicCheckout          Topic = "Checkout"
+	TopicPurchaseConfirmed Topic = "PurchaseConfirmed"
+)
 
 var EB *eventBus
 
-// type EventBus interface {
-// 	Subscribe(topic string) <-chan string
-// 	Publish(topic string, payload T)
-// 	Close()
-// }
-
 type eventBus struct {
 	mu     sync.RWMutex
-	subs   map[string][]chan string
+	subs   map[Topic][]chan string
 	closed bool
 }
 
 func NewEventBus() *eventBus {
 	EB = &eventBus{}
-	EB.subs = make(map[string][]chan string)
+	EB.subs = make(map[Topic][]chan string)
 	EB.closed = false
 	return EB
 }
 
 // consume
-func (eb *eventBus) Subscribe(topic string) <-chan string {
+func (eb *eventBus) Subscribe(topic Topic) <-chan string {
 	eb.mu.Lock()
 	defer eb.mu.Unlock()
 
@@ -42,7 +39,7 @@ func (eb *eventBus) Subscribe(topic string) <-chan string {
 }
 
 // produce
-func (eb *eventBus) Publish(topic string, payload string) {
+func (eb *eventBus) Publish(topic Topic, payload string) {
 	eb.mu.RLock()
 	defer eb.mu.RUnlock()
 
@@ -70,17 +67,8 @@ func (eb *eventBus) Close() {
 	fmt.Println("EventBus Closed")
 }
 
-// type PayloadTypes interface {
-// 	AddedToCartPayload | CheckoutPayload
-// }
-
-// type AddedToCartPayload struct {
-// 	ItemSku  string
-// 	CartId   string
-// 	ServerTS time.Time
-// }
-
-// type CheckoutPayload struct {
-// 	CartId   string
-// 	ServerTS time.Time
-// }
+func NewDefaultHandler(subscriber string, ch <-chan string) {
+	for event := range ch {
+		fmt.Printf("[%s] got %s\n", subscriber, event)
+	}
+}

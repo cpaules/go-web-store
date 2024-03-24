@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -17,24 +16,20 @@ const defaultPort = "8080"
 
 func main() {
 	eb := event.NewEventBus()
-	// add subscribers
-	analytics1 := eb.Subscribe("AddedToCart")
-	analytics2 := eb.Subscribe("Checkout")
-	analytics3 := eb.Subscribe("PurchaseConfirmed")
-	emailService := eb.Subscribe("PurchaseConfirmed")
-	orderFullfilmentService := eb.Subscribe("PurchaseConfirmed")
 
-	listener := func(subscriber string, ch <-chan string) {
-		for event := range ch {
-			fmt.Printf("[%s] got %s\n", subscriber, event)
-		}
+	analytics := map[string]<-chan string{
+		"AddedToCart":       eb.Subscribe(event.TopicAddedToCart),
+		"Checkout":          eb.Subscribe(event.TopicCheckout),
+		"PurchaseConfirmed": eb.Subscribe(event.TopicPurchaseConfirmed),
 	}
+	emailService := eb.Subscribe(event.TopicPurchaseConfirmed)
+	orderFullfilmentService := eb.Subscribe(event.TopicPurchaseConfirmed)
 
-	go listener("Analytics", analytics1)
-	go listener("Analytics", analytics2)
-	go listener("Analytics", analytics3)
-	go listener("EmailService", emailService)
-	go listener("OrderFullfilmentService", orderFullfilmentService)
+	go event.NewDefaultHandler("Analytics", analytics["AddedToCart"])
+	go event.NewDefaultHandler("Analytics", analytics["Checkout"])
+	go event.NewDefaultHandler("Analytics", analytics["PurchaseConfirmed"])
+	go event.NewDefaultHandler("EmailService", emailService)
+	go event.NewDefaultHandler("OrderFullfilmentService", orderFullfilmentService)
 
 	port := os.Getenv("PORT")
 	if port == "" {
