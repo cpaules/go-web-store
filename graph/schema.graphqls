@@ -32,7 +32,7 @@ input NewItem {
 type Mutation {
   createItem(item: NewItem!): Item!
   addItemToCart(sku: String!): Cart!
-  checkout(cart_id: ID!): Invoice!
+  checkout(cart_id: ID! = 1): Invoice!
   confirmPurchase(invoice_id: ID!, confirm: Boolean! = true): String!
 }
 

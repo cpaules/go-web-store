@@ -28,7 +28,11 @@ func (r *mutationResolver) CreateItem(ctx context.Context, item model.NewItem) (
 
 // AddItemToCart is the resolver for the addItemToCart field.
 func (r *mutationResolver) AddItemToCart(ctx context.Context, sku string) (*model.Cart, error) {
-	r.cart.Items = append(r.cart.Items, r.items[sku])
+	item, ok := r.items[sku]
+	if !ok {
+		return nil, errors.New("Cannot add invalid item to cart!")
+	}
+	r.cart.Items = append(r.cart.Items, item)
 	message := fmt.Sprintf("AddedToCart -> ItemSku: %s, CartId: %s, ServerTS: %s", sku, r.cart.ID, time.Now().Format(time.RFC3339))
 	event.EB.Publish(event.TopicAddedToCart, message)
 	return r.cart, nil
@@ -47,7 +51,7 @@ func (r *mutationResolver) Checkout(ctx context.Context, cartID string) (*model.
 		Status: &state,
 	}
 	r.invoices = append(r.invoices, newInvoice)
-	message := fmt.Sprintf("Checkout -> CartId: %s, ServerTS: %s", r.cart.ID, time.Now().Format(time.RFC3339))
+	message := fmt.Sprintf("Checkout -> CartId: %s, ServerTS: %s", cartID, time.Now().Format(time.RFC3339))
 	event.EB.Publish(event.TopicCheckout, message)
 	return newInvoice, nil
 }
