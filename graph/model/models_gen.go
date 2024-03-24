@@ -2,7 +2,65 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
+type Invoice struct {
+	ID     string        `json:"id"`
+	Items  []*Item       `json:"items"`
+	Total  *float64      `json:"total,omitempty"`
+	Status *InvoiceState `json:"status,omitempty"`
+}
+
 type NewItem struct {
 	Sku   string  `json:"sku"`
 	Price float64 `json:"price"`
+}
+
+type InvoiceState string
+
+const (
+	InvoiceStatePending   InvoiceState = "Pending"
+	InvoiceStateCanceled  InvoiceState = "Canceled"
+	InvoiceStatePaid      InvoiceState = "Paid"
+	InvoiceStateCompleted InvoiceState = "Completed"
+)
+
+var AllInvoiceState = []InvoiceState{
+	InvoiceStatePending,
+	InvoiceStateCanceled,
+	InvoiceStatePaid,
+	InvoiceStateCompleted,
+}
+
+func (e InvoiceState) IsValid() bool {
+	switch e {
+	case InvoiceStatePending, InvoiceStateCanceled, InvoiceStatePaid, InvoiceStateCompleted:
+		return true
+	}
+	return false
+}
+
+func (e InvoiceState) String() string {
+	return string(e)
+}
+
+func (e *InvoiceState) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = InvoiceState(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid InvoiceState", str)
+	}
+	return nil
+}
+
+func (e InvoiceState) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

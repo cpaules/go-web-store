@@ -9,8 +9,9 @@ import "github.com/cpaules/go-web-store/graph/model"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	items map[string]*model.Item
-	cart  *model.Cart
+	items    map[string]*model.Item
+	cart     *model.Cart
+	invoices []*model.Invoice
 }
 
 func NewDefaultResolver() *Resolver {
@@ -20,5 +21,6 @@ func NewDefaultResolver() *Resolver {
 			ID:    "1",
 			Items: []*model.Item{},
 		},
+		invoices: []*model.Invoice{},
 	}
 }

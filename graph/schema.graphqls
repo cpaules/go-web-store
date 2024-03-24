@@ -10,9 +10,18 @@ type Cart {
   total: Float
 }
 
+type Invoice {
+  id: ID!
+  items: [Item!]!
+  total: Float
+  status: InvoiceState
+}
+
 type Query {
   items: [Item!]!
   cart: Cart!
+  invoices: [Invoice!]!
+  invoice(invoice_id: ID!): Invoice!
 }
 
 input NewItem {
@@ -23,5 +32,13 @@ input NewItem {
 type Mutation {
   createItem(item: NewItem!): Item!
   addItemToCart(sku: String!): Cart!
-  checkout(cart_id: ID!): String!
+  checkout(cart_id: ID!): Invoice!
+  confirmPurchase(invoice_id: ID!, confirm: Boolean! = true): String!
+}
+
+enum InvoiceState {
+	Pending
+  Canceled
+  Paid
+  Completed
 }
