@@ -30,7 +30,6 @@ func (r *mutationResolver) CreateItem(ctx context.Context, item model.NewItem) (
 func (r *mutationResolver) AddItemToCart(ctx context.Context, sku string) (*model.Cart, error) {
 	r.cart.Items = append(r.cart.Items, r.items[sku])
 	message := fmt.Sprintf("AddedToCart -> ItemSku: %s, CartId: %s, ServerTS: %s", sku, r.cart.ID, time.Now().Format(time.RFC3339))
-	// fmt.Printf("Publishing @%s: %s\n", "AddedToCart", message)
 	event.EB.Publish(event.TopicAddedToCart, message)
 	return r.cart, nil
 }
@@ -62,8 +61,8 @@ func (r *mutationResolver) ConfirmPurchase(ctx context.Context, invoiceID string
 	r.cart.Items = nil
 	// user is declining the invoice, set status to canceled
 	if !confirm {
-		cancled := model.InvoiceStateCanceled
-		invoice.Status = &cancled
+		canceled := model.InvoiceStateCanceled
+		invoice.Status = &canceled
 		return "Purchase successfully canceled", nil
 	}
 

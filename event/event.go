@@ -64,7 +64,6 @@ func (eb *eventBus) Close() {
 			}
 		}
 	}
-	fmt.Println("EventBus Closed")
 }
 
 func NewDefaultHandler(subscriber string, ch <-chan string) {
