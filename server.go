@@ -23,13 +23,13 @@ func main() {
 		"PurchaseConfirmed": eb.Subscribe(event.TopicPurchaseConfirmed),
 	}
 	emailService := eb.Subscribe(event.TopicPurchaseConfirmed)
-	orderFullfilmentService := eb.Subscribe(event.TopicPurchaseConfirmed)
+	orderFulfillmentService := eb.Subscribe(event.TopicPurchaseConfirmed)
 
 	go event.NewDefaultHandler("Analytics", analytics["AddedToCart"])
 	go event.NewDefaultHandler("Analytics", analytics["Checkout"])
 	go event.NewDefaultHandler("Analytics", analytics["PurchaseConfirmed"])
 	go event.NewDefaultHandler("EmailService", emailService)
-	go event.NewDefaultHandler("OrderFullfilmentService", orderFullfilmentService)
+	go event.NewDefaultHandler("OrderFulfillmentService", orderFulfillmentService)
 
 	port := os.Getenv("PORT")
 	if port == "" {
